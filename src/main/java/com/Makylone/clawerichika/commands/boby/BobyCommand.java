@@ -75,68 +75,79 @@ public class BobyCommand implements ICommand {
             return;
         }
 
-        // Récupérer la liste (Nécessite GUILD_MEMBERS Intent)
-        List<Member> membersWithBoby = event
+        // findMemberWithRole au lieu de getMembersWithRoles pour interroger directement l'API discord
+        event
             .getGuild()
-            .getMembersWithRoles(bobyRole);
+            .findMembersWithRoles(bobyRole)
+            .onSuccess(membersWithBoby -> {
+                System.out.println(
+                    "Membres trouvés : " + membersWithBoby.size()
+                );
 
-        System.out.println(
-            "Membres avec le rôle trouvés : " + membersWithBoby.size()
-        );
+                // 1. On retire le rôle boby aux personnes ayant déjà le rôle.
+                for (Member oldBoby : membersWithBoby) {
+                    // On va d'abord regarder si la personne à qui ont veut attribuer le rôle boby ne l'a déjà pas
+                    if (oldBoby.getId().equals(targetMember.getId())) {
+                        event
+                            .getHook()
+                            .sendMessage("Cette personne a déjà le rôle boby")
+                            .queue();
+                        return;
+                    }
+                    event
+                        .getGuild()
+                        .removeRoleFromMember(oldBoby, bobyRole)
+                        .queue();
+                    // On redonne aussi le rôle admin aux anciens boby
+                    event
+                        .getGuild()
+                        .addRoleToMember(oldBoby, adminRole)
+                        .queue();
+                    System.out.println(
+                        oldBoby.getUser().getName() + " a récupéré ses rôles"
+                    );
+                }
+                // 2. On retire a retire aussi le rôle d'admin à la personne qui va recevoir le rôle boby
+                event
+                    .getGuild()
+                    .removeRoleFromMember(targetMember, adminRole)
+                    .queue();
+                System.out.println(
+                    "Rôle admin retirer à: " + targetMember.getUser().getName()
+                );
 
-        // 1. On retire le rôle à TOUT LE MONDE qui l'a actuellement
-        for (Member oldBoby : membersWithBoby) {
-            // Si la cible l'a déjà, on ne fait rien pour l'instant (on le gère après) ou on stop
-            if (oldBoby.getId().equals(targetMember.getId())) {
+                // 3. On donne le rôle à l'utilisateur ciblé
+                event
+                    .getGuild()
+                    .addRoleToMember(targetMember, bobyRole)
+                    .queue(
+                        success -> {
+                            event
+                                .getHook()
+                                .sendMessage(
+                                    "Le rôle boby a été transféré à " +
+                                        targetMember.getAsMention()
+                                )
+                                .queue();
+                        },
+                        failure -> {
+                            event
+                                .getHook()
+                                .sendMessage(
+                                    "Erreur : Impossible de donner le rôle."
+                                )
+                                .queue();
+                        }
+                    );
+            })
+            .onError(error -> {
                 event
                     .getHook()
-                    .sendMessage("Cette personne a déjà le rôle boby !")
+                    .sendMessage(
+                        "Erreur technique lors de la recherche des membres."
+                    )
                     .queue();
-                return;
-            }
-
-            // On retire le rôle aux anciens
-            event.getGuild().removeRoleFromMember(oldBoby, bobyRole).queue();
-            System.out.println(
-                "Rôle retiré à : " + oldBoby.getUser().getName()
-            );
-            // On remet le rôle admin aux anciens
-            event.getGuild().addRoleToMember(oldBoby, adminRole).queue();
-            System.out.println(
-                "Rôle admin réattribuer à : " + oldBoby.getUser().getName()
-            );
-        }
-        // 2. On retire le rôle admin
-        event
-            .getGuild()
-            .removeRoleFromMember(targetMember, adminRole)
-            .queue(
-                success -> System.out.println("Rôle admin retirer"),
-                failure ->
-                    event
-                        .getHook()
-                        .sendMessage(
-                            "Erreur: impossible de retirer le rôle admin."
-                        )
-            );
-        // 3. On donne le rôle au nouveau
-        event
-            .getGuild()
-            .addRoleToMember(targetMember, bobyRole)
-            .queue(
-                success ->
-                    event
-                        .getHook()
-                        .sendMessage(
-                            "Le rôle boby a été transféré à " +
-                                targetMember.getAsMention()
-                        )
-                        .queue(),
-                error ->
-                    event
-                        .getHook()
-                        .sendMessage("Erreur : Impossible de donner le rôle.")
-                        .queue()
-            );
+                error.printStackTrace();
+            });
     }
 }
