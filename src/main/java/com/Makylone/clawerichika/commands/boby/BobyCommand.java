@@ -2,8 +2,10 @@ package com.Makylone.clawerichika.commands.boby;
 
 import com.Makylone.clawerichika.commands.ICommand;
 import com.Makylone.clawerichika.config.ConfigManager;
+import com.Makylone.clawerichika.utils.CooldownManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -13,6 +15,13 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 public class BobyCommand implements ICommand {
 
     private final String AdminIdrole;
+
+    // Cooldown d'une journée, convertit en millisecondes
+    private final long COOLDOWN_DURATION = TimeUnit.DAYS.toMillis(1);
+
+    private final CooldownManager cooldownManager = new CooldownManager(
+        "boby_command_last_execution"
+    );
 
     public BobyCommand() {
         this.AdminIdrole = ConfigManager.GetAdminRoleId();
@@ -49,12 +58,29 @@ public class BobyCommand implements ICommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
+        // On regarde si un cooldown est appliqué ou non à la commande:
+        long lastExution = cooldownManager.loadLastExecution();
+        long currentTimestamp = System.currentTimeMillis();
+        long nextAvailableTime = lastExution + COOLDOWN_DURATION;
+        // On regarde la différence entre le timestamp actuel et le timestamp de la prochaine disponibilité de la commande
+        if (currentTimestamp < nextAvailableTime) {
+            long secondsRemaining = (nextAvailableTime) / 1000;
+            event
+                .reply(
+                    "Attention, la commande boby ne sera disponible que <t:" +
+                        secondsRemaining +
+                        ":R>"
+                )
+                .setEphemeral(false)
+                .queue();
+            return;
+        }
         // On diffère la réponse car parcourir les membres peut prendre > 3 secondes
         event.deferReply().queue();
 
         Member targetMember = event.getOption("cible").getAsMember();
 
-        // ID du role Boby (Idéalement à mettre dans le ConfigManager aussi !)
+        // ID du role Boby (Idéalement à mettre dans le ConfigManager aussi)
         Role bobyRole = event.getGuild().getRoleById("1407656913503522836");
 
         Role adminRole = event.getGuild().getRoleById(this.AdminIdrole);
@@ -74,7 +100,20 @@ public class BobyCommand implements ICommand {
                 .queue();
             return;
         }
-
+        // On va aussi regarder si la personne ciblé est admin ou non (seul les admins peuvent avoir le rôle boby)
+        List<Role> rolesOfTheTargetMember = targetMember.getRoles();
+        if (
+            !rolesOfTheTargetMember.contains(adminRole) &&
+            !rolesOfTheTargetMember.contains(bobyRole)
+        ) {
+            event
+                .getHook()
+                .sendMessage(
+                    "Vous ne pouvez pas mettre le rôle boby sur une personne non admin."
+                )
+                .queue();
+            return;
+        }
         // findMemberWithRole au lieu de getMembersWithRoles pour interroger directement l'API discord
         event
             .getGuild()
@@ -129,6 +168,7 @@ public class BobyCommand implements ICommand {
                                         targetMember.getAsMention()
                                 )
                                 .queue();
+                            cooldownManager.saveLastExecutionTime();
                         },
                         failure -> {
                             event
