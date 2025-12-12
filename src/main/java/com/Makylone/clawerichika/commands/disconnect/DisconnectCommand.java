@@ -40,7 +40,7 @@ public class DisconnectCommand implements ICommand {
 
   @Override
   public void execute(SlashCommandInteractionEvent event) {
-    event.deferReply();
+    event.deferReply().queue();
 
     Member member = event.getMember();
     Member bot = event.getGuild().getSelfMember();

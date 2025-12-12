@@ -1,8 +1,8 @@
 package com.Makylone.clawerichika.commands.timeout;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import com.Makylone.clawerichika.commands.ICommand;
 
@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class TimeoutCommand implements ICommand {
+
+  public static final String OPT_DUREE = "duree";
 
   @Override
   public String GetName() {
@@ -42,7 +44,7 @@ public class TimeoutCommand implements ICommand {
     options.add(
       new OptionData(
         OptionType.INTEGER,
-        "durée",
+        OPT_DUREE,
         "La durée du timeout (en seconde, ne peut pas exéder 2h)",
         true
       )
@@ -52,19 +54,25 @@ public class TimeoutCommand implements ICommand {
 
   @Override
   public void execute(SlashCommandInteractionEvent event) {
-    event.deferReply();
+    event.deferReply().queue();
 
     Member member = event.getMember();
     Member targetMember = event.getOption("cible").getAsMember();
 
+    System.out.println("ID Auteur : " + member.getUser().getIdLong());
+    System.out.println("ID Cible  : " + targetMember.getUser().getIdLong());
+    
     if (member.getUser().getIdLong() == targetMember.getUser().getIdLong()) {
       event.getHook().sendMessage("Impossible de s'auto-timeout").queue();
       return;
     }
-    long duration = event.getOption("durée").getAsLong();
+    long duration = event.getOption(OPT_DUREE).getAsLong();
+
+    System.out.println("Duration: " + duration);
+    
     if (targetMember.isOwner()) {
       event.reply("?, aller hop mange toi le timeout").queue();
-      member.timeoutFor(duration, TimeUnit.SECONDS).queue();
+      member.timeoutFor(Duration.ofSeconds(duration)).queue();
       return;
     }
     if (!member.canInteract(targetMember)) {
@@ -74,7 +82,7 @@ public class TimeoutCommand implements ICommand {
         .queue();
       return;
     }
-    targetMember.timeoutFor(duration, TimeUnit.SECONDS).queue();
+    targetMember.timeoutFor(Duration.ofSeconds(duration)).queue();
     event
       .getHook()
       .sendMessage(targetMember.getAsMention() + "a bien ete timeout")

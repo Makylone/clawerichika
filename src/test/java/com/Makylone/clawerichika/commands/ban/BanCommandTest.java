@@ -27,7 +27,7 @@ import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
 @ExtendWith(MockitoExtension.class)
-class BanCommandTest {
+public class BanCommandTest {
 
     @Mock SlashCommandInteractionEvent event;
     @Mock Guild guild;
@@ -74,6 +74,7 @@ class BanCommandTest {
         lenient().when(optionMapping.getAsUser()).thenReturn(mockTargetUser); 
 
         // 5. Configuration de la réponse Discord
+        lenient().when(event.deferReply()).thenReturn(replyAction);
         lenient().when(event.reply(anyString())).thenReturn(replyAction);
         lenient().when(replyAction.setEphemeral(true)).thenReturn(replyAction);
         

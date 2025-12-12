@@ -1,12 +1,10 @@
 package com.Makylone.clawerichika.listeners;
 
-import java.awt.Color;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import org.jetbrains.annotations.NotNull;
+
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 public class EventListener extends ListenerAdapter {
 
@@ -17,7 +15,7 @@ public class EventListener extends ListenerAdapter {
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         // 1. On récupère le salon système (souvent "général" ou "bienvenue")
         // Note : Assure-toi que ce salon est configuré dans les paramètres de ton serveur Discord
-        TextChannel welcomeChannel = event.getGuild().getSystemChannel();
+        /*TextChannel welcomeChannel = event.getGuild().getSystemChannel();
 
         // Si le salon système existe et que le bot peut écrire dedans
         if (welcomeChannel != null && welcomeChannel.canTalk()) {
@@ -38,7 +36,7 @@ public class EventListener extends ListenerAdapter {
 
             // On peut aussi lui ajouter un rôle automatiquement ici (ex: "Membre")
             // event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("ID_DU_ROLE")).queue();
-        }
+        }*/
     }
 
     /**

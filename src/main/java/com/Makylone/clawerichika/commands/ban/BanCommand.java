@@ -53,7 +53,7 @@ public class BanCommand implements ICommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.deferReply();
+        event.deferReply().queue();
         // On regarde si la personne ne s'est pas auto selectionné
         Member member = event.getMember();
         Member targetMember = event.getOption("personne").getAsMember();

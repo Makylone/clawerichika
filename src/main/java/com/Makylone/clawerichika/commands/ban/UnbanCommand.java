@@ -1,8 +1,10 @@
 package com.Makylone.clawerichika.commands.ban;
 
-import com.Makylone.clawerichika.commands.ICommand;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.Makylone.clawerichika.commands.ICommand;
+
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -42,7 +44,7 @@ public class UnbanCommand implements ICommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.deferReply();
+        event.deferReply().queue();
         // Check si le bot a les permissions pour unban
         if (
             !event
