@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
 import org.mockito.Mock;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
@@ -81,7 +82,7 @@ public class TimeoutCommandTest {
         // 6. Configuration des actions
         // On mocke la méthode qui prend une Duration (JDA 5 standard)
         lenient().when(targetMember.timeoutFor(any(Duration.class))).thenReturn(timeoutAction);
-        lenient().when(timeoutAction.reason(anyString())).thenReturn(timeoutAction);
+        lenient().when(authorMember.timeoutFor(any(Duration.class))).thenReturn(timeoutAction);
     }
 
     @Test
@@ -105,5 +106,49 @@ public class TimeoutCommandTest {
         
         // 2. On vérifie que l'action est envoyée
         verify(timeoutAction).queue();
+    }
+
+    @Test
+    void shouldNotTimeout_WhenTargetMemberIsOwner(){
+        // --- A. GIVEN ---
+        lenient().when(durationOption.getAsLong()).thenReturn(60L);
+
+        // Le targetMember est propriétaire du server
+        lenient().when(selfMember.canInteract(targetMember)).thenReturn(true);
+        lenient().when(authorMember.canInteract(targetMember)).thenReturn(true);
+        when(targetMember.isOwner()).thenReturn(true);
+
+        // --- B. WHEN ---
+        timeoutCommand.execute(event);
+
+        // --- C. THEN ---
+        // 1. On regarde si la réponse a bien été envoyé
+        verify(event).reply(contains("mange toi le timeout"));
+
+        // 2. On vérifie que le timeout a bien été appliqué sur le membre
+        // Ayant fait la commande
+        verify(authorMember).timeoutFor(Duration.ofSeconds(60));
+
+        // 3. On regarde si l'action a bien été envoyée
+        verify(timeoutAction).queue();
+    }
+
+    @Test
+    void shouldNotTimeout_WhenAuthorMemberCantInteractWithTargetMember(){
+         // --- A. GIVEN ---
+        lenient().when(durationOption.getAsLong()).thenReturn(60L);
+
+        // Le targetMember est propriétaire du server
+        lenient().when(selfMember.canInteract(targetMember)).thenReturn(true);
+        lenient().when(authorMember.canInteract(targetMember)).thenReturn(false);
+        when(targetMember.isOwner()).thenReturn(false);
+
+        // --- B. WHEN ---
+        timeoutCommand.execute(event);
+
+        // --- C. THEN ---
+        // 1. On regarde si le message a bien été envoyé
+        verify(hookAction).sendMessage(contains("Wsh tu peux pas le to"));
+
     }
 }
