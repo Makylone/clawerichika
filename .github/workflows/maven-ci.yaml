@@ -18,9 +18,9 @@ jobs:
     - name: Set JVM 21
       uses: actions/setup-java@v4
       with:
-      java-version: '21'
-      distribution: 'temurin'
-      cache: Maven
+        java-version: '21'
+        distribution: 'temurin'
+        cache: Maven
     
     # 2. Donner les permission pour exécuter le script maven
     - name: Grant exuction permission for the mvnw
