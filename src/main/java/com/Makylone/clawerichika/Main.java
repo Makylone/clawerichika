@@ -25,6 +25,7 @@ public class Main {
                 .setActivity(Activity.playing("boop bip loser"))
                 .addEventListeners(commandManager)
                 .build();
+            System.out.print("Bot started");
         } catch (Exception e) {
             System.err.println("Erreur au démarrage du bot !");
             e.printStackTrace();
