@@ -29,3 +29,15 @@ jobs:
     # 3. Lancer les tests 
     - name: Run the unitests
       run: ./mvnw clean test
+    
+    # 4. Généré le .jar
+    - name: Build JAR file
+      run: ./mvnw package -DskipTests # Skip les tests puisqu'on les a déjà fait juste avant
+
+    # 5.Sauvegarder le JAR pour la release
+    - name: Upload JAR file
+      uses: actions/upload-artifact@v4
+      with:
+        name: clawerichika-jar
+        path: target/*.jar
+        retentions-days: 1
