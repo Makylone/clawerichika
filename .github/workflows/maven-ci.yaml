@@ -1,0 +1,31 @@
+name: Java CI Maven for clawerichika
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # 1. Set up la version de Java
+    - name: Set JVM 21
+    uses: actions/setup-java@v4
+    with:
+      java-version: '21'
+      distribution: 'temurin'
+      cache: Maven
+    
+    # 2. Donner les permission pour exécuter le script maven
+    - name: Grant exuction permission for the mvnw
+      run: chmod +x mvnw
+
+    # 3. Lancer les tests 
+    - name: Run the unitests
+      run: ./mvnw clean test
