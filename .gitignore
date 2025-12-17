@@ -1,6 +1,5 @@
 .git
 .env
-.mvn
 .project
 dependency-reduced-pom.xml
 target
