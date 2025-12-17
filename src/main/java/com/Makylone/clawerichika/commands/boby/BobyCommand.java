@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class BobyCommand implements ICommand {
 
+  // ID Admin
   private final String AdminIdrole;
 
   // Cooldown de 30 heures, convertit en millisecondes
