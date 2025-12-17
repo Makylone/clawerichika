@@ -9,7 +9,7 @@ on:
     branches: [ "main" ]
 
 # Donner la permission pour écrire dans les releases 
-permission: 
+permissions: 
   contents: write
 
 jobs:
