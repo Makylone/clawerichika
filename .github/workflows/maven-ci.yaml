@@ -2,9 +2,9 @@ name: Java CI Maven for clawerichika
 
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ $default-branch ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
       with:
         java-version: '21'
         distribution: 'temurin'
-        cache: Maven
+        cache: maven
     
     # 2. Donner les permission pour exécuter le script maven
     - name: Grant exuction permission for the mvnw
@@ -40,4 +40,4 @@ jobs:
       with:
         name: clawerichika-jar
         path: target/*.jar
-        retentions-days: 1
+        retention-days: 1
