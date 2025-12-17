@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent; // <--- L'IMPORT IMPORTANT
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent; 
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
@@ -113,7 +113,6 @@ public class BanCommandTest {
         lenient().when(selfMember.canInteract(targetMember)).thenReturn(true);
         lenient().when(authorMember.canInteract(targetMember)).thenReturn(true);
         
-        // C'est le chef !
         when(targetMember.isOwner()).thenReturn(true);
 
         // --- B. WHEN ---

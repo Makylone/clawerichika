@@ -1,6 +1,6 @@
 package com.Makylone.clawerichika.commands.timeout;
 
-import java.time.Duration; // <--- Vérifie que c'est bien java.time
+import java.time.Duration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +67,7 @@ public class TimeoutCommandTest {
         lenient().when(event.getMember()).thenReturn(authorMember);
 
         // 4. Configuration de l'Option 
-        lenient().when(event.getOption("cible")).thenReturn(targetOption);
+        lenient().when(event.getOption(TimeoutCommand.OPT_CIBLE)).thenReturn(targetOption);
         lenient().when(event.getOption(TimeoutCommand.OPT_DUREE)).thenReturn(durationOption);
         
         lenient().when(targetOption.getAsMember()).thenReturn(targetMember);

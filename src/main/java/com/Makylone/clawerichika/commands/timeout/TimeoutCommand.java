@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 public class TimeoutCommand implements ICommand {
 
   public static final String OPT_DUREE = "duree";
+  public static final String OPT_CIBLE = "cible";
 
   @Override
   public String GetName() {
@@ -57,7 +58,7 @@ public class TimeoutCommand implements ICommand {
     event.deferReply().queue();
 
     Member member = event.getMember();
-    Member targetMember = event.getOption("cible").getAsMember();
+    Member targetMember = event.getOption(OPT_CIBLE).getAsMember();
 
     System.out.println("ID Auteur : " + member.getUser().getIdLong());
     System.out.println("ID Cible  : " + targetMember.getUser().getIdLong());
