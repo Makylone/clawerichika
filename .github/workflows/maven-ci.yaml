@@ -59,7 +59,7 @@ jobs:
     needs: build
     if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main'
 
-    runs-on: debian-latest
+    runs-on: ubuntu-latest
 
 
     steps:
@@ -68,7 +68,7 @@ jobs:
     - name: Download JAR artifact
       uses: actions/download-artifact@v4
       with:
-        name: final-jar
+        name: clawerichika-jar
     
     # 2. Envoie le fichier sur le server
     - name: Copy JAR via SCP
@@ -78,7 +78,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        source: "clawerichika.jar"
+        source: "clawerichika-jar.jar"
         target: "/home/debian/bot"
         overwrite: true
 
