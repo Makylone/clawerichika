@@ -42,7 +42,7 @@ jobs:
 
     # 5. Renommer le fichier jar
     - name: Rename JAR
-      run: mv target/*.jar target/clawerichika.jar
+      run: mv ./target/*.jar ./target/clawerichika.jar
 
     # 6. Sauvegarder le JAR pour la release
     - name: Upload JAR file
