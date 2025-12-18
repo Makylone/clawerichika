@@ -40,15 +40,19 @@ jobs:
     - name: Build JAR file
       run: ./mvnw package -DskipTests # Skip les tests puisqu'on les a déjà fait juste avant
 
-    # 5. Sauvegarder le JAR pour la release
+    # 5. Renommer le fichier jar
+    - name: Rename JAR
+      run: mv target/*.jar target/clawerichika.jar
+
+    # 6. Sauvegarder le JAR pour la release
     - name: Upload JAR file
       uses: actions/upload-artifact@v4
       with:
         name: clawerichika-jar
-        path: target/*.jar
+        path: target/clawerichika.jar
         retention-days: 1
     
-    # 6. Création de la release
+    # 7. Création de la release
     - name: Create the release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v2
@@ -78,7 +82,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        source: "clawerichika-jar.jar"
+        source: "clawerichika.jar"
         target: "/home/debian/bot"
         overwrite: true
 
