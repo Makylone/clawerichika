@@ -72,25 +72,25 @@ jobs:
     
     # 2. Envoie le fichier sur le server
     - name: Copy JAR via SCP
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          source: "clawerichika.jar"
-          target: "/home/debian/bot"
-          overwrite: true
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        source: "clawerichika.jar"
+        target: "/home/debian/bot"
+        overwrite: true
 
     # 3. Connecte sur le serveur en ssh pour restart le serveur
     - name: Restart Bot via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          # La commande qui redémarre le service qu'on a créé à l'étape 1
-          script: |
-            sudo systemctl restart discord-bot
-            echo "✅ Bot déployé et redémarré avec succès !"
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        # La commande qui redémarre le service qu'on a créé à l'étape 1
+        script: |
+          sudo systemctl restart discord-bot
+          echo "✅ Bot déployé et redémarré avec succès !"
