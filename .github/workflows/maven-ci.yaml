@@ -90,7 +90,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        # La commande qui redémarre le service qu'on a créé à l'étape 1
+        # La commande qui redémarre le service
         script: |
           sudo systemctl restart discord-bot
           echo "✅ Bot déployé et redémarré avec succès !"
