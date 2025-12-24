@@ -1,4 +1,4 @@
-# 🦞 Clawerichika - Discord Bot
+# 🤖 Clawerichika - Discord Bot
 
 ![Java CI with Maven](https://github.com/TonPseudo/clawerichika/actions/workflows/maven-ci.yml/badge.svg)
 ![Java Version](https://img.shields.io/badge/Java-21-orange)
