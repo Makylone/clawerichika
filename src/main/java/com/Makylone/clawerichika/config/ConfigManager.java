@@ -7,7 +7,7 @@ public class ConfigManager {
     public static final Dotenv DOTENV = Dotenv.load();
 
     public static String GetToken() {
-        return DOTENV.get("TOKEN_DISCORD");
+        return DOTENV.get("TOKEN_DISCORD_DEV");
     }
 
     public static String GetAdminRoleId() {

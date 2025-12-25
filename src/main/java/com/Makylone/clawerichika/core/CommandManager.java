@@ -11,6 +11,7 @@ import com.Makylone.clawerichika.commands.ban.UnbanCommand;
 import com.Makylone.clawerichika.commands.boby.BobyCommand;
 import com.Makylone.clawerichika.commands.disconnect.DisconnectCommand;
 import com.Makylone.clawerichika.commands.ping.PingCommand;
+import com.Makylone.clawerichika.commands.spinthewheel.SpinthwheelCommand;
 import com.Makylone.clawerichika.commands.timeout.TimeoutCommand;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -40,6 +41,7 @@ public class CommandManager extends ListenerAdapter {
         addCommand(new BobyCommand());
         addCommand(new TimeoutCommand());
         addCommand(new DisconnectCommand());
+        addCommand(new SpinthwheelCommand());
         //addCommand(new PingCommand());
     }
 
