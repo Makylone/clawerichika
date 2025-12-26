@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.FileUpload;
 
-public class SpinthwheelCommand implements ICommand{
+public class SpinthewheelCommand implements ICommand{
 
     private final long COOLDOWN_DURATION = TimeUnit.DAYS.toMillis(7);
 
@@ -57,6 +57,23 @@ public class SpinthwheelCommand implements ICommand{
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
+        // On regarde si un cooldown est appliqué ou non à la commande:
+        long lastExution = cooldownManager.loadLastExecution();
+        long currentTimestamp = System.currentTimeMillis();
+        long nextAvailableTime = lastExution + COOLDOWN_DURATION;
+        // On regarde la différence entre le timestamp actuel et le timestamp de la prochaine disponibilité de la commande
+        if (currentTimestamp < nextAvailableTime) {
+        long secondsRemaining = (nextAvailableTime) / 1000;
+            event
+                .reply(
+                    "Attention, la commande spin the wheel ne sera disponible que <t:" +
+                    secondsRemaining +
+                    ":R>"
+                )
+                .setEphemeral(false)
+                .queue();
+            return;
+        }
         event.deferReply().queue();
         Member targetMember = event.getOption("cible").getAsMember();
         if(targetMember == null) {
@@ -66,6 +83,7 @@ public class SpinthwheelCommand implements ICommand{
 
         // Lancer la séquence
         runWheelSequence(event, targetMember, false);
+        cooldownManager.saveLastExecutionTime();
     }
 
     private void runWheelSequence(SlashCommandInteractionEvent event, Member victim, boolean isReversed){
@@ -95,7 +113,7 @@ public class SpinthwheelCommand implements ICommand{
     }
 
 
-    protected  void applyPunishment(SlashCommandInteractionEvent event, Member victim, int winnerIndex) {
+    protected void applyPunishment(SlashCommandInteractionEvent event, Member victim, int winnerIndex) {
         System.out.println(winnerIndex);
         switch (winnerIndex) {
             case 0 -> {
