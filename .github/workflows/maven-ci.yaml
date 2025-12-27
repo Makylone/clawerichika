@@ -2,11 +2,11 @@ name: Java CI Maven for clawerichika
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
     tags: 
       - 'v*'
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
 
 # Donner la permission pour écrire dans les releases 
 permissions: 

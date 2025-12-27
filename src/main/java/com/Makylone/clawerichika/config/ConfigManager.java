@@ -1,12 +1,16 @@
 package com.Makylone.clawerichika.config;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class ConfigManager {
 
+    public static final Dotenv DOTENV = Dotenv.load();
+
     public static String GetToken() {
-        return System.getenv("TOKEN_DISCORD");
+        return DOTENV.get("TOKEN_DISCORD");
     }
 
     public static String GetAdminRoleId() {
-        return System.getenv("ADMIN_ROLE_ID");
+        return DOTENV.get("ADMIN_ROLE_ID");
     }
 }
