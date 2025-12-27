@@ -20,7 +20,7 @@ import net.dv8tion.jda.api.utils.FileUpload;
 
 public class SpinthewheelCommand implements ICommand{
 
-    private final long COOLDOWN_DURATION = TimeUnit.DAYS.toMillis(7);
+    private final long COOLDOWN_DURATION = TimeUnit.DAYS.toMillis(1);
 
     private final CooldownManager cooldownManager = new CooldownManager(
     "spinthewheel_command_last_execution"

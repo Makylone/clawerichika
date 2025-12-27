@@ -35,21 +35,30 @@ public class CooldownManager {
 
     public void saveLastExecutionTime() {
         Properties properties = new Properties();
+        
+        // On essaie de charger les données existantes d'abord !
+        try (FileInputStream in = new FileInputStream(FILE_NAME)) {
+            properties.load(in);
+        } catch (IOException e) {
+            // Si le fichier n'existe pas encore (première fois), ce n'est pas grave,
+            // on continue avec un objet properties vide.
+        }
+
+        // On ajoute/écrase seulement la clé actuelle
         properties.setProperty(
             this.KEY_TIMESTAMP,
             String.valueOf(System.currentTimeMillis())
         );
+
+        // On réécrit le tout (les anciennes clés + la nouvelle)
         try (FileOutputStream out = new FileOutputStream(FILE_NAME)) {
             properties.store(
                 out,
-                "Sauvegarde du timestamp de la dernière éxecution"
+                "Sauvegarde des timestamps de cooldown"
             );
-            out.close();
-        } catch (IOException eIoException) {
-            eIoException.printStackTrace();
-            System.err.println(
-                "Impossible de sauvegarder le timestamps du cooldown"
-            );
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Impossible de sauvegarder le timestamp.");
         }
     }
 }
