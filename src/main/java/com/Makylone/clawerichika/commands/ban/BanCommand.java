@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.Makylone.clawerichika.commands.ICommand;
 
 import net.dv8tion.jda.api.entities.Member;
@@ -13,6 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class BanCommand implements ICommand {
+    private static final Logger logger = LoggerFactory.getLogger(BanCommand.class);
 
     @Override
     public String GetName() {
@@ -63,7 +67,7 @@ public class BanCommand implements ICommand {
         if (
             member.getUser().getIdLong() == targetMember.getUser().getIdLong()
         ) {
-            System.out.println("Impossible d'autoban");
+            logger.info("Impossible d'autoban");
             event
                 .reply(
                     "Ti est fou ou quoi ? Ti est pas un peu fada a vouloir te ban toi même, mon lion?"
@@ -73,6 +77,7 @@ public class BanCommand implements ICommand {
         }
         // Est ce que l'utilisateur veut ban le owner
         if (targetMember.isOwner()) {
+            logger.info(member.getNickname() + " a essayé de ban le owner");
             event
                 .reply("non. tiens mange toi un timeout")
                 .setEphemeral(true)
@@ -82,7 +87,7 @@ public class BanCommand implements ICommand {
         }
         // On regarde aussi si la personne peut ban la personne ciblée
         Member selfMember = event.getGuild().getSelfMember();
-        System.out.println(selfMember.getUser().getName());
+        logger.debug(selfMember.getUser().getName());
         // Est ce que le bot peut ban la personne visée?
         if (!selfMember.canInteract(targetMember)) {
             event

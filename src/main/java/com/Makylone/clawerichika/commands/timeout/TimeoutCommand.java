@@ -4,6 +4,9 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.Makylone.clawerichika.commands.ICommand;
 
 import net.dv8tion.jda.api.entities.Member;
@@ -15,6 +18,7 @@ public class TimeoutCommand implements ICommand {
 
   public static final String OPT_DUREE = "duree";
   public static final String OPT_CIBLE = "cible";
+  private static final Logger logger = LoggerFactory.getLogger(TimeoutCommand.class);
 
   @Override
   public String GetName() {
@@ -60,8 +64,8 @@ public class TimeoutCommand implements ICommand {
     Member member = event.getMember();
     Member targetMember = event.getOption(OPT_CIBLE).getAsMember();
 
-    System.out.println("ID Auteur : " + member.getUser().getIdLong());
-    System.out.println("ID Cible  : " + targetMember.getUser().getIdLong());
+    logger.debug("ID Auteur : " + member.getUser().getIdLong());
+    logger.debug("ID Cible  : " + targetMember.getUser().getIdLong());
     
     if (member.getUser().getIdLong() == targetMember.getUser().getIdLong()) {
       event.getHook().sendMessage("Impossible de s'auto-timeout").queue();
@@ -69,14 +73,16 @@ public class TimeoutCommand implements ICommand {
     }
     long duration = event.getOption(OPT_DUREE).getAsLong();
 
-    System.out.println("Duration: " + duration);
+    logger.debug("Duration: " + duration);
     
     if (targetMember.isOwner()) {
+      logger.info(member.getNickname() + " a essayé de time le owner");
       event.reply("?, aller hop mange toi le timeout").queue();
       member.timeoutFor(Duration.ofSeconds(duration)).queue();
       return;
     }
     if (!member.canInteract(targetMember)) {
+      logger.warn(member.getNickname() + " a essayé de TO " + targetMember.getNickname());
       event
         .getHook()
         .sendMessage("Wsh tu peux pas le to, essaie de le boby avant pour voir")
@@ -84,6 +90,7 @@ public class TimeoutCommand implements ICommand {
       return;
     }
     targetMember.timeoutFor(Duration.ofSeconds(duration)).queue();
+    logger.info(targetMember.getNickname() + " a été TO.");
     event
       .getHook()
       .sendMessage(targetMember.getAsMention() + "a bien ete timeout")

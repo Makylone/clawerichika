@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.Makylone.clawerichika.commands.ICommand;
 import com.Makylone.clawerichika.commands.ban.BanCommand;
@@ -25,6 +27,7 @@ public class CommandManager extends ListenerAdapter {
 
     private final List<ICommand> commands = new ArrayList<>();
     private final PermissionHandler PermissionHandler = new PermissionHandler();
+    private static final Logger logger = LoggerFactory.getLogger(CommandManager.class);
 
     public CommandManager() {
         registerCommand();
@@ -80,12 +83,12 @@ public class CommandManager extends ListenerAdapter {
             .addCommands(commandDataList)
             .queue(
                 success ->
-                    System.out.println(
+                    logger.debug(
                         "✅ Commandes mises à jour avec succès : " +
                             success.size()
                     ),
                 error ->
-                    System.err.println(
+                    logger.error(
                         "❌ Erreur lors de la mise à jour des commandes : " +
                             error.getMessage()
                     )
@@ -110,6 +113,7 @@ public class CommandManager extends ListenerAdapter {
                         .queue();
                     return;
                 }
+                logger.debug("Commande " + command.GetName() + " éxecutée par: " + event.getMember().getNickname());
                 command.execute(event);
             }
         }
