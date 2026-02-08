@@ -103,7 +103,7 @@ public class SpinthewheelCommand implements ICommand{
                  .setContent((isReversed ? "↩️ REVERSE !" : "La roue a parlé : ") + "**" + winnerName + "** !")
                  .queue(success -> {
                      // 3. Après l'envoie, on punit (Délai optionnel pour le suspense)
-                     applyPunishment(event, victim, winnerIndex);
+                     applyPunishment(event, victim, winnerIndex, isReversed);
                  });
         }).exceptionally(ex -> {
             event.getHook().sendMessage("Erreur lors de la génération de la roue.").queue();
@@ -113,7 +113,7 @@ public class SpinthewheelCommand implements ICommand{
     }
 
 
-    protected void applyPunishment(SlashCommandInteractionEvent event, Member victim, int winnerIndex) {
+    protected void applyPunishment(SlashCommandInteractionEvent event, Member victim, int winnerIndex, boolean isReversed) {
         System.out.println(winnerIndex);
         switch (winnerIndex) {
             case 0 -> {
@@ -139,10 +139,13 @@ public class SpinthewheelCommand implements ICommand{
             }
             case 4 -> { 
                 event.getHook().sendMessage("REVERSE ! Attention au retour de flamme 🔥🔥🔥").queue();
+                
+                if(isReversed){
+                    runWheelSequence(event, victim, false);
+                }
                 // On relance la roue sur l'auteur de la commande
                 Member author = event.getMember();
                 
-                // Pour éviter une boucle infinie, on pourrait empêcher le reverse ici
                 runWheelSequence(event, author, true);
             }
         }
