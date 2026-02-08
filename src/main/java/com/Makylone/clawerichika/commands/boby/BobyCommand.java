@@ -80,7 +80,6 @@ public class BobyCommand implements ICommand {
     }
     // On diffère la réponse car parcourir les membres peut prendre > 3 secondes
     event.deferReply().queue();
-
     Member targetMember = event.getOption("cible").getAsMember();
 
     // ID du role Boby (Idéalement à mettre dans le ConfigManager aussi)

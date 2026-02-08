@@ -150,7 +150,7 @@ public class AnimatedWheelGenerator {
         return frame;
     }
 
-   public static byte[] generateGifWithFFmpeg(int winnerIndex) throws IOException, InterruptedException {
+    public static byte[] generateGifWithFFmpeg(int winnerIndex) throws IOException, InterruptedException {
         
         Path tempDir = Files.createTempDirectory("clawerichika_wheel_");
         File outputFile = tempDir.resolve("output.gif").toFile();
@@ -227,7 +227,7 @@ public class AnimatedWheelGenerator {
             return Files.readAllBytes(outputFile.toPath());
 
         } finally {
-            // Nettoyage...
+            // Nettoyage
             try (Stream<Path> walk = Files.walk(tempDir)) {
                 walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
             } catch (Exception ignored) {}
