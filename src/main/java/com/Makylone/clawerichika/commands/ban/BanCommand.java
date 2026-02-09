@@ -63,7 +63,7 @@ public class BanCommand implements ICommand {
         Member targetMember = event.getOption("personne").getAsMember();
         // Si jamais la personne n'est pas sur le serveur
         User targetUser = event.getOption("personne").getAsUser();
-        
+        logger.debug("Auteur: " + member.getNickname() + ", targetMember: " + targetMember.getNickname() + ", targetUser : " + targetUser.getName());
         if (
             member.getUser().getIdLong() == targetMember.getUser().getIdLong()
         ) {
@@ -114,54 +114,31 @@ public class BanCommand implements ICommand {
                 .queue();
             return;
         }
-        if (targetMember != null) {
-            event
-                .getGuild()
-                .ban(targetMember, 999999, TimeUnit.DAYS)
-                .queue(
-                    success -> {
-                        event
-                            .getHook()
-                            .sendMessage(
-                                "**Ban: ** " +
-                                    targetUser.getAsMention() +
-                                    " a été banni."
-                            )
-                            .queue();
-                    },
-                    error -> {
-                        event
-                            .getHook()
-                            .sendMessage(
-                                "❌ Erreur lors du ban : " + error.getMessage()
-                            )
-                            .queue();
-                    }
-                );
-        } else {
-            event
-                .getGuild()
-                .ban(targetUser, 999999, TimeUnit.DAYS)
-                .queue(
-                    success -> {
-                        event
-                            .getHook()
-                            .sendMessage(
-                                "**Ban: ** " +
-                                    targetUser.getAsMention() +
-                                    " a été banni."
-                            )
-                            .queue();
-                    },
-                    error -> {
-                        event
-                            .getHook()
-                            .sendMessage(
-                                "❌ Erreur lors du ban : " + error.getMessage()
-                            )
-                            .queue();
-                    }
-                );
-        }
+        event
+            .getGuild()
+            .ban(targetUser, 999999, TimeUnit.DAYS)
+            .queue(
+                success -> {
+                    logger.info(targetUser.getName() + "a été banni");
+                    event
+                        .getHook()
+                        .sendMessage(
+                            "**Ban: ** " +
+                                targetUser.getAsMention() +
+                                " a été banni."
+                        )
+                        .queue();
+                },
+                error -> {
+                    logger.error(error.getMessage());
+                    event
+                        .getHook()
+                        .sendMessage(
+                            "❌ Erreur lors du ban : " + error.getMessage()
+                        )
+                        .queue();
+                }
+            );
     }
+    
 }
