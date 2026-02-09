@@ -7,6 +7,9 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.Makylone.clawerichika.commands.ICommand;
 import com.Makylone.clawerichika.utils.AnimatedWheelGenerator;
 import com.Makylone.clawerichika.utils.CooldownManager;
@@ -20,11 +23,11 @@ import net.dv8tion.jda.api.utils.FileUpload;
 
 public class SpinthewheelCommand implements ICommand{
 
-    private final long COOLDOWN_DURATION = TimeUnit.MINUTES.toMillis(1);
-
+    private final long COOLDOWN_DURATION = TimeUnit.DAYS.toMillis(1);
+    private static final Logger logger = LoggerFactory.getLogger(SpinthewheelCommand.class);
     private final CooldownManager cooldownManager = new CooldownManager(
     "spinthewheel_command_last_execution"
-  );
+    );
 
     @Override
     public String GetName() {
@@ -61,6 +64,7 @@ public class SpinthewheelCommand implements ICommand{
         long lastExution = cooldownManager.loadLastExecution();
         long currentTimestamp = System.currentTimeMillis();
         long nextAvailableTime = lastExution + COOLDOWN_DURATION;
+        logger.info("lastExecution: " + lastExution + " currentTimestamp: " + currentTimestamp + " nextAvailableTime: " + nextAvailableTime);
         // On regarde la différence entre le timestamp actuel et le timestamp de la prochaine disponibilité de la commande
         if (currentTimestamp < nextAvailableTime) {
         long secondsRemaining = (nextAvailableTime) / 1000;
@@ -76,6 +80,7 @@ public class SpinthewheelCommand implements ICommand{
         }
         event.deferReply().queue();
         Member targetMember = event.getOption("cible").getAsMember();
+        logger.debug("target member: " + targetMember.getNickname());
         if(targetMember == null) {
             event.getHook().sendMessage("Membre introuvable !").queue();
             return;
@@ -90,6 +95,7 @@ public class SpinthewheelCommand implements ICommand{
         Random random = new Random();
         int winnerIndex = random.nextInt(AnimatedWheelGenerator.OPTIONS.length);
         String winnerName = AnimatedWheelGenerator.OPTIONS[winnerIndex];
+        logger.debug(winnerName);
         // 1. Générer et Envoyer le GIF (Asynchrone)
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -114,21 +120,27 @@ public class SpinthewheelCommand implements ICommand{
 
 
     protected void applyPunishment(SlashCommandInteractionEvent event, Member victim, int winnerIndex, boolean isReversed) {
-        System.out.println(winnerIndex);
+        logger.debug(""+winnerIndex);
+        logger.debug("victim: " + victim.getNickname());
+        logger.debug("applyPunishment have been called");
         switch (winnerIndex) {
             case 0 -> {
                 event.getHook().sendMessage("5 minutes de TO pour " + victim.getAsMention()).queue();
+                logger.debug("TO 5min");
                 victim.timeoutFor(Duration.ofMinutes(5)).queue();
             }
             case 1 -> {
                 event.getHook().sendMessage("10 minutes de TO pour " + victim.getAsMention()).queue();
+                logger.debug("TO 10min");
                 victim.timeoutFor(Duration.ofMinutes(10)).queue();
             }
             case 2 -> {
                 event.getHook().sendMessage("1h de TO pour " + victim.getAsMention()).queue();
+                logger.debug("TO 1h");
                 victim.timeoutFor(Duration.ofHours(1)).queue();
             }
             case 3 -> {
+                logger.debug("reset roles");
                 List<Role> roles = victim.getRoles();
                 for (Role role : roles) {
                     if (!role.getId().equals("1361670311787106334")) {
@@ -139,7 +151,7 @@ public class SpinthewheelCommand implements ICommand{
             }
             case 4 -> { 
                 event.getHook().sendMessage("REVERSE ! Attention au retour de flamme 🔥🔥🔥").queue();
-                
+                logger.debug("reverse");
                 if(isReversed){
                     runWheelSequence(event, victim, false);
                 }
